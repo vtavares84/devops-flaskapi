@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_mongoengine import MongoEngine
+from mongoengine import NotUniqueError
 
 app = Flask(__name__)
 api = Api(app)
@@ -64,8 +65,13 @@ class Users(Resource):
 class User(Resource):
     def post(self):
         data = _user_parser.parse_args()
-        UserModel(**data).save()
-        
+
+        try:
+            response = UserModel(**data).save()
+            return {"message": "Usuário %s foi criado com sucesso!" % response.id}
+        except NotUniqueError:
+            return {"message": "CPF já foi utilizado na base de dados"}
+                
 
     def get(self, cpf):
         return {"message": cpf}
