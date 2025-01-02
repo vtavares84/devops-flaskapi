@@ -70,11 +70,15 @@ class User(Resource):
             response = UserModel(**data).save()
             return {"message": "Usuário %s foi criado com sucesso!" % response.id}
         except NotUniqueError:
-            return {"message": "CPF já foi utilizado na base de dados"}
+            return {"message": "CPF já foi utilizado na base de dados"}, 400
                 
 
     def get(self, cpf):
-        return {"message": cpf}
+        response = UserModel.objects(cpf=cpf)
+        if response:
+            return jsonify(response)
+        
+        return {"message": "Usuário não foi encontrado no banco de dados"}, 400
 
 
 api.add_resource(Users, '/users')
