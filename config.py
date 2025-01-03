@@ -1,6 +1,5 @@
 
 class DevConfig():
-
     MONGODB_SETTINGS = {
         'db': 'users',
         'host': 'mongodb',
